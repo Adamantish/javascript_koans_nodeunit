@@ -59,8 +59,8 @@ var duck = new Duck("Donald");
 // =============================================================================
 
 exports.test_inheritance_means_using_a_parent_object_as_the_prototype = function(test) {
-  test.equal(___, typeof(duck));
-  test.equal(___, Object.getPrototypeOf(duck) instanceof Animal);
+  test.equal("object", typeof(duck));
+  test.equal(true, Object.getPrototypeOf(duck) instanceof Animal);
   test.done();
 };
 
@@ -73,20 +73,21 @@ exports.test_objects_ultimately_use_object_as_the_prototype = function(test) {
   var objectPrototype = Object.getPrototypeOf(animalPrototype);
   var noMorePrototypes = Object.getPrototypeOf(objectPrototype);
 
-  test.equal(___, duckPrototype instanceof Animal);
-  test.equal(___, animalPrototype instanceof Object);
-  test.equal(___, objectPrototype === Object.prototype);
-  test.equal(___, noMorePrototypes);
+  test.equal(true, duckPrototype instanceof Animal);
+  test.equal(true, animalPrototype instanceof Object);
+  test.equal(true, objectPrototype === Object.prototype);
+  test.equal(null, noMorePrototypes);
   test.done();
 };
 
 exports.test_objects_inherit_methods_from_parent_prototype = function(test) {
-  test.equal(___, dog.speak());
-  test.equal(___, dog.getName());
-  test.equal(___, dog.whoAmI());
-  test.equal(___, duck.speak());
-  test.equal(___, duck.getName());
-  test.equal(___, duck.whoAmI());
+  test.equal("Woof!", dog.speak());
+  test.equal("Buddy", dog.getName());
+  console.log("I am: " + dog.whoAmI())
+  test.equal({ name: 'Buddy' }, dog.whoAmI());
+  test.equal("Quack!", duck.speak());
+  test.equal("Donald", duck.getName());
+  test.equal({ name: 'Donald' }, duck.whoAmI());
   test.done();
 }
 
@@ -98,19 +99,30 @@ exports.test_duck_typing_is_good_enough = function(test) {
     length += animals[i].getName().length;
   }
 
-  test.equal(___, length);
+  test.equal(11, length);
   test.done();
 }
 
 exports.test_inherited_objects_can_change_behaviour = function(test) {
+  // note that here we're not changing the original getName method but putting a new one
+  // lower down in the tree. This is defined on the particular animal that made our Dog prototype.
+  // The original was not on that animal but the prototype for all animals.
   Dog.prototype.getName = function() {
     return 5 * 5;
   }
 
+  Animal.prototype.itch = function() {
+    return "tick tick"
+  }
+
   dog = new Dog();
 
-  test.equal(___, dog.getName());
-  test.equal(___, new Animal("Barney").getName());
+  test.equal(25, dog.getName());
+  test.equal("tick tick", dog.itch());
+  console.log("Animal is" + Animal)
+  // The next point shows that when we make a new animal it's not the same one that made our
+  // dog prototype. The dog prototype is not a class. It is a particular object instance.
+  test.equal('Barney', new Animal("Barney").getName());  
   test.done();
 }
 
@@ -122,7 +134,8 @@ exports.test_inherited_objects_can_call_their_parent_method_statically = functio
   dog = new Dog("Buddy");
   var animal = dog.myPrototype().myPrototype();
 
-  test.equal(___, dog.getName());
-  test.equal(___, animal.getName.call(dog));
+  test.equal(25, dog.getName());
+  test.equal("Buddy", animal.getName.call(dog));
   test.done();
 }
+

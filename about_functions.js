@@ -138,18 +138,18 @@ exports.singleton_functions_can_be_defined_on_single_objects = function(test) {
 
 	numbers.double();
 
-	test.equal(___, numbers[0]);
-	test.equal(___, numbers[1]);
-	test.equal(___, numbers[2]);
-	test.equal(___, numbers[3]);
-	test.equal(___, numbers[4]);
+	test.equal(2, numbers[0]);
+	test.equal(4, numbers[1]);
+	test.equal(6, numbers[2]);
+	test.equal(8, numbers[3]);
+	test.equal(10, numbers[4]);
 
 	var other_numbers = [1, 2, 3, 4, 5];
 	try {
 		other_numbers.double();
 	}
 	catch(err) {
-		test.equal(___, err.name);
+		test.equal("TypeError", err.name);
 	}
 	test.done();
 };
